@@ -6,23 +6,22 @@ type Props = {
   receiver: string;
   message: string;
   onOpenBtnClick: () => void;
-  onDeleteBtnClick: () => void;
 }
 
 export const EmailCard = ({ subject, author, receiver, 
-  message, onOpenBtnClick, onDeleteBtnClick }: Props) => {
+  message, onOpenBtnClick }: Props) => {
   
   return (
     <Card>
       <CardHeader>
         <Heading size="md">{subject}</Heading>
         <Heading size="xs" colorScheme="gray" mt={2}>
-          FROM: <span className="text-gray-600">
+          Remetente: <span className="text-gray-600">
                   {author}
                 </span>
         </Heading>
         <Heading size="xs" colorScheme="gray">
-          TO: <span className="text-gray-600">
+          Destinatário: <span className="text-gray-600">
                 {receiver}
               </span>                  
         </Heading>
@@ -37,13 +36,7 @@ export const EmailCard = ({ subject, author, receiver,
             onClick={onOpenBtnClick}
           >
             Abrir
-          </Button>
-          <Button 
-            colorScheme="red"
-            onClick={onDeleteBtnClick}
-          >
-            Deletar
-          </Button>
+          </Button>          
         </HStack>            
       </CardFooter>
     </Card>

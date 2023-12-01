@@ -3,6 +3,7 @@ import { WhatsApp } from "@/@types/WhatsApp";
 import { EmailCard } from "@/components/EmailCard";
 import { ModalEdit } from "@/components/ModalEdit";
 import { WpMessageCard } from "@/components/WpMessageCard";
+import { deleteWpMessage } from "@/services/http/deleteWpMessage";
 import { getEventMessages } from "@/services/http/getEventMessages";
 import { Container, Grid, GridItem, Card, CardHeader,
   CardBody, CardFooter, Heading, Text,
@@ -19,11 +20,11 @@ export default function EventDetails({ eventEmails, wpMessages, eventInfo }: Inf
   const [email, setEmail] = useState<Email | null>(null);
 
   const { isOpen: isEmailOpen, onOpen: emailOnOpen, onClose: emailOnClose } = useDisclosure({
-    id: "email-modal-edit"
+    id: "email-modal-open"
   });
 
   const { isOpen: isWpMessageOpen, onOpen: wpMessageOnOpen, onClose: wpMessageOnClose } = useDisclosure({
-    id: "whatsapp-modal-edit"
+    id: "whatsapp-modal-open"
   });
 
   const onEmailOpenBtnClick = (email: Email) => {
@@ -31,21 +32,19 @@ export default function EventDetails({ eventEmails, wpMessages, eventInfo }: Inf
     emailOnOpen();
   }
 
-  const onEmailDeleteBtnClick = () => {
-    
-  }
-
   const onWpMessageOpenBtnClick = (message: WhatsApp) => {
     setWpMessage(message);
     wpMessageOnOpen();
   }
 
-  const onWpMessageDeleteBtnClick = () => {
-    
+  const onWpMessageDeleteBtnClick = async (messageId: number) => {
+    await deleteWpMessage(messageId);
+    router.reload();
   }
 
   return (
     <Container maxW="container.lg" py={10}>
+      <Divider orientation="horizontal" mb={4} />
       <Flex mb={14} justifyContent="flex-end">
         <Box>
           <Button 
@@ -72,8 +71,7 @@ export default function EventDetails({ eventEmails, wpMessages, eventInfo }: Inf
               message={email.message} 
               receiver={email.receiver}
               subject={email.subject}
-              onOpenBtnClick={() => onEmailOpenBtnClick(email)}
-              onDeleteBtnClick={() => {}}
+              onOpenBtnClick={() => onEmailOpenBtnClick(email)}              
             />
           </GridItem>
         ))}
@@ -84,7 +82,7 @@ export default function EventDetails({ eventEmails, wpMessages, eventInfo }: Inf
         onClose={emailOnClose}
         isOpen={isEmailOpen}
         header={email?.subject ?? ""}
-        id="email-modal-edit"
+        id="email-modal-open"
       >        
         <Heading size="xs" colorScheme="gray">
           FROM: <span className="text-gray-600">
@@ -114,8 +112,8 @@ export default function EventDetails({ eventEmails, wpMessages, eventInfo }: Inf
               message={msg.message}
               authorPhoneNumber={msg.authorPhoneNumber}
               receiverPhoneNumber={msg.receiverPhoneNumber}
-              onDeleteBtnClick={() => {}}
               onOpenBtnClick={() => onWpMessageOpenBtnClick(msg)}
+              onDeleteBtnClick={() => onWpMessageDeleteBtnClick(msg.id)}
             />
           </GridItem>
         ))}
@@ -126,7 +124,7 @@ export default function EventDetails({ eventEmails, wpMessages, eventInfo }: Inf
         onClose={wpMessageOnClose}
         isOpen={isWpMessageOpen}
         header="Mensagem do WhatsApp"
-        id="whatsapp-modal-edit"
+        id="whatsapp-modal-open"
       >        
         <Heading size="xs" colorScheme="gray">
           FROM: <span className="text-gray-600">
